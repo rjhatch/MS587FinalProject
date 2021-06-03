@@ -1,0 +1,42 @@
+﻿@code {
+    List<Session> Sessions = new List<Session>();
+
+    protected class Session
+    {
+        public string Name { get; set; }
+        public string Description { get; set; }
+        public string Location { get; set; }
+    }
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+
+        for (int i = 0; i < 10; i++)
+        {
+            Session sess = new Session
+            {
+                Name = $"Krav Maga Level {i % 3 + 1}",
+                Description = "The description of the class.",
+                Location = $"Room {i % 3 + 1}"
+            };
+
+            Sessions.Add(sess);
+        }
+
+    }
+}
+
+<div class="container">
+    @foreach (var session in Sessions)
+    {
+        <div class="row">
+            <div class="card">
+                <div class="card-body">
+                    Name: @session.Name
+                    Location: @session.Location
+                </div>
+            </div>
+        </div>
+    }
+</div>
