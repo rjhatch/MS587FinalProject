@@ -13,5 +13,8 @@ namespace MS587FinalProject.Data
             : base(options)
         {
         }
+
+        public DbSet<ClassSession> ClassSessions { get; set; }
+        public DbSet<Comment> Comments { get; set; }
     }
 }
