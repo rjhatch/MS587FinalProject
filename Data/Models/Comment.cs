@@ -10,5 +10,6 @@ namespace MS587FinalProject.Data.Models
         public int CommentId { get; set; }
         public ApplicationUser Id { get; set; }
         public string Text { get; set; }
+        public int ParentCommentId { get; set; }
     }
 }

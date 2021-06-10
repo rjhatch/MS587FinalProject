@@ -1,0 +1,79 @@
+﻿@page "/class"
+@page "/class/{id:int}"
+@using MS587FinalProject.Data.Models
+@using MS587FinalProject.Data
+@inject ApplicationDbContext dbContext
+@inject NavigationManager navManager
+
+<h3>ClassSession</h3>
+
+<EditForm Model="@SessionDetails" OnValidSubmit="@HandleValidSubmission">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+    <div class="input-group mb-3 col-6">
+        <div class="input-group-prepend">
+            <span class="input-group-text">Name</span>
+        </div>
+        <input type="text" class="form-control" placeholder="Class Name" @bind-value="SessionDetails.Name">
+    </div>
+    <div class="input-group mb-3 col-6">
+        <div class="input-group-prepend">
+            <span class="input-group-text">Decription</span>
+        </div>
+        <input type="text" class="form-control" placeholder="Class Description" @bind-value="SessionDetails.Description">
+    </div>
+    <form>
+        <div class="input-group mb-3 col-6">
+            <div class="input-group-prepend">
+                <span class="input-group-text">Start Time</span>
+            </div>
+            <InputSelect @bind-Value="SessionDetails.StartHour" class="custom-select">
+                <option selected>Hour</option>
+                @for (int i = 1; i <= 24; i++)
+                {
+                    <option value="@i">@i</option>
+                }
+            </InputSelect>
+            <InputSelect @bind-Value="SessionDetails.StartMinute" class="custom-select">
+                <option selected>Minute</option>
+                @for (int i = 0; i < 60; i += 5)
+                {
+                    <option value="@i">@i</option>
+                }
+            </InputSelect>
+        </div>
+    </form>
+    <form>
+        <div class="input-group mb-3 col-6">
+            <div class="input-group-prepend">
+                <span class="input-group-text">Duration</span>
+            </div>
+            <input @bind-value="SessionDetails.Duration" type="text" class="form-control" placeholder="Number">
+            <InputSelect @bind-Value="SessionDetails.UnitOfTime" class="custom-select">
+                <option selected>Unit of Time</option>
+                <option value="Minute">Minute</option>
+                <option value="Minute">Hour</option>
+                <option value="Minute">Day</option>
+            </InputSelect>
+
+        </div>
+    </form>
+    <input type="submit" value="Submit" class="btn btn-primary" />
+</EditForm>
+
+
+@code {
+    [Parameter]
+    public int id { get; set; }
+
+    ClassSession SessionDetails = new ClassSession();
+
+    void HandleValidSubmission()
+    {
+        dbContext.Add(SessionDetails);
+        dbContext.SaveChanges();
+
+        navManager.NavigateTo($"/class/{SessionDetails.ClassSessionId}");
+    }
+
+}
