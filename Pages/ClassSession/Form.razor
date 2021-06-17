@@ -1,13 +1,4 @@
-﻿@page "/class"
-@page "/class/{id:int}"
-@using MS587FinalProject.Data.Models
-@using MS587FinalProject.Data
-@inject ApplicationDbContext dbContext
-@inject NavigationManager navManager
-
-<h3>ClassSession</h3>
-
-<EditForm Model="@SessionDetails" OnValidSubmit="@HandleValidSubmission">
+﻿<EditForm Model="@SessionDetails" OnValidSubmit="@OnValidSubmit">
     <DataAnnotationsValidator />
     <ValidationSummary />
     <div class="input-group mb-3 col-6">
@@ -58,22 +49,17 @@
 
         </div>
     </form>
-    <input type="submit" value="Submit" class="btn btn-primary" />
+    @*<input type="submit" value="Submit" class="btn btn-success">*@
+    <button type="submit" class="btn btn-success">@ButtonText</button>
 </EditForm>
-
 
 @code {
     [Parameter]
-    public int id { get; set; }
+    public Data.Models.ClassSession SessionDetails { get; set; }
 
-    ClassSession SessionDetails = new ClassSession();
+    [Parameter]
+    public string ButtonText { get; set; }
 
-    void HandleValidSubmission()
-    {
-        dbContext.Add(SessionDetails);
-        dbContext.SaveChanges();
-
-        navManager.NavigateTo($"/class/{SessionDetails.ClassSessionId}");
-    }
-
+    [Parameter]
+    public EventCallback OnValidSubmit { get; set; }
 }

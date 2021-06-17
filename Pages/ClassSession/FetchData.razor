@@ -1,0 +1,74 @@
+﻿@page "/class"
+@inject ApplicationDbContext dbContext
+@inject NavigationManager navManager
+
+<h3>Classes</h3>
+
+<div class="form-group">
+    <a class="btn btn-success" href="class/create"><i class="oi oi-plus"></i> Create New</a>
+</div>
+
+@if (Classes == null)
+{
+    <p>Loading...</p>
+}
+else if (Classes.Count == 0)
+{
+    <p>No classes found.</p>
+}
+else
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Name</th>
+                <th>Description</th>
+                <th>StartHour</th>
+                <th>StartMinute</th>
+                <th>Duration</th>
+                <th>UnitOfTime</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var session in Classes)
+            {
+                <tr>
+                    <td>@session.ClassSessionId</td>
+                    <td>@session.Name</td>
+                    <td>@session.Description</td>
+                    <td>@session.StartHour</td>
+                    <td>@session.StartMinute</td>
+                    <td>@session.Duration</td>
+                    <td>@session.UnitOfTime</td>
+                    <td>
+                        <a class="btn btn-primary" href="class/edit/@session.ClassSessionId">Edit</a>
+                        <button class="btn btn-danger" @onclick="@(() => DeleteClass(session.ClassSessionId))">Delete</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+
+
+
+@code {
+    public List<ClassSession> Classes { get; set; }
+
+    protected override void OnInitialized()
+    {
+        Classes = dbContext.ClassSessions.ToList();
+    }
+
+    async Task DeleteClass(int id)
+    {
+        ClassSession session = dbContext.ClassSessions.Find(id);
+        dbContext.Remove(session);
+
+        await dbContext.SaveChangesAsync();
+
+        OnInitialized();
+    }
+}

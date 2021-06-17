@@ -1,0 +1,27 @@
+﻿@page "/class/edit/{classId:int}"
+@inject ApplicationDbContext dbContext
+@inject NavigationManager navManager
+
+<h3>Edit</h3>
+
+<Form ButtonText="Update" SessionDetails="SessionDetails" 
+      OnValidSubmit="@EditClass"/>
+
+@code {
+    [Parameter]
+    public int classId { get; set; }
+    ClassSession SessionDetails = new ClassSession();
+
+    protected override void OnParametersSet()
+    {
+        SessionDetails = dbContext.ClassSessions.FirstOrDefault(session => session.ClassSessionId == classId);
+    }
+
+    async Task EditClass()
+    {
+        dbContext.ClassSessions.Update(SessionDetails);
+        await dbContext.SaveChangesAsync();
+
+        navManager.NavigateTo("class");
+    }
+}

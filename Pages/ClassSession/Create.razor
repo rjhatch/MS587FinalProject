@@ -1,0 +1,19 @@
+﻿@page "/class/create"
+@inject ApplicationDbContext dbContext
+@inject NavigationManager navManager
+
+<h3>Create</h3>
+
+<Form ButtonText="Create Class" SessionDetails="@SessionDetails"
+      OnValidSubmit="@CreateClass"/>
+
+@code {
+    ClassSession SessionDetails = new ClassSession();
+
+    async Task CreateClass()
+    {
+        await dbContext.AddAsync(SessionDetails);
+        await dbContext.SaveChangesAsync();
+        navManager.NavigateTo("class");
+    }
+}
