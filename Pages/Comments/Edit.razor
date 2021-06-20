@@ -1,0 +1,27 @@
+﻿@page "/comment/edit/{commentId:int}"
+@inject ApplicationDbContext dbContext
+@inject NavigationManager navManager
+
+<h3>Edit</h3>
+
+<Form ButtonText="Update" Comment="Comment" 
+      OnValidSubmit="@EditComment"/>
+
+@code {
+    [Parameter]
+    public int commentId { get; set; }
+    Comment Comment = new Comment();
+
+    protected override void OnParametersSet()
+    {
+        Comment = dbContext.Comments.FirstOrDefault(comment => comment.CommentId == commentId);
+    }
+
+    async Task EditComment()
+    {
+        dbContext.Comments.Update(Comment);
+        await dbContext.SaveChangesAsync();
+
+        navManager.NavigateTo("comment");
+    }
+}

@@ -1,0 +1,73 @@
+﻿@page "/comment"
+@inject ApplicationDbContext dbContext
+@inject NavigationManager navManager
+
+<h3>Comments</h3>
+
+<div class="form-group">
+    <a class="btn btn-success" href="comment/create"><i class="oi oi-plus"></i> Create New</a>
+</div>
+
+@if (Comments == null)
+{
+    <p>Loading...</p>
+}
+else if (Comments.Count == 0)
+{
+    <p>No comments found.</p>
+}
+else
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Author</th>
+                <th>Text</th>
+            </tr>
+        </thead>
+        <tbody>
+            @{
+                if (Comments != null)
+                {
+                    foreach (var comment in Comments)
+                    {
+                        <tr>
+                            <td>@comment.CommentId</td>
+                            <td>@comment.Author.FirstName</td>
+                            <td>@comment.Text</td>
+                            <td>
+                                <a class="btn btn-primary" href="comment/edit/@comment.CommentId">Edit</a>
+                                <button class="btn btn-danger" @onclick="@(() => DeleteComment(comment.CommentId))">Delete</button>
+                            </td>
+                        </tr>
+                    }
+                }
+            }
+        </tbody>
+    </table>
+}
+
+
+
+
+@code {
+    public List<Comment> Comments { get; set; }
+
+    protected override void OnInitialized()
+    {
+        Comments = dbContext.Comments
+            .Include(a => a.Author)
+            .ToList();
+    }
+
+    async Task DeleteComment(int id)
+    {
+        Comment comment = dbContext.Comments.Find(id);
+        dbContext.Remove(comment);
+
+        await dbContext.SaveChangesAsync();
+
+        OnInitialized();
+    }
+}

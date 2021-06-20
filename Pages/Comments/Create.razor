@@ -1,0 +1,33 @@
+﻿@page "/comment/create"
+@inject ApplicationDbContext dbContext
+@inject NavigationManager navManager
+
+<h3>Create</h3>
+
+<Form ButtonText="Create Comment" Comment="@Comment"
+      OnValidSubmit="@CreateClass" />
+
+@code {
+    Comment Comment = new Comment();
+    private AuthenticationState authState;
+
+    private string userId;
+
+    [CascadingParameter]
+    private Task<AuthenticationState> AuthenticationStateTask { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        authState = await AuthenticationStateTask;
+        var user = authState.User;
+        userId = user.FindFirst(uid => uid.Type.Contains("nameidentifier")).Value;
+    }
+
+    async Task CreateClass()
+    {
+        Comment.Author = dbContext.Users.FirstOrDefault(u => u.Id == userId);
+        await dbContext.AddAsync(Comment);
+        await dbContext.SaveChangesAsync();
+        navManager.NavigateTo("comment");
+    }
+}

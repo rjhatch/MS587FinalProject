@@ -1,0 +1,22 @@
+﻿<EditForm Model="@Comment" OnValidSubmit="@OnValidSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+    <div class="input-group mb-3 col-6">
+        <div class="input-group-prepend">
+            <span class="input-group-text">Comment</span>
+        </div>
+        <textarea type="text" class="form-control" placeholder="Comment" @bind="@Comment.Text"></textarea>
+    </div>
+    <button type="submit" class="btn btn-success">@ButtonText</button>
+</EditForm>
+
+@code {
+    [Parameter]
+    public Data.Models.Comment Comment { get; set; }
+
+    [Parameter]
+    public string ButtonText { get; set; }
+
+    [Parameter]
+    public EventCallback OnValidSubmit { get; set; }
+}
