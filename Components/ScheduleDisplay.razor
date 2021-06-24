@@ -1,42 +1,28 @@
-﻿@code {
-    List<Session> Sessions = new List<Session>();
+﻿@inject ApplicationDbContext dbContext
 
-    protected class Session
-    {
-        public string Name { get; set; }
-        public string Description { get; set; }
-        public string Location { get; set; }
-    }
-
-    protected override void OnInitialized()
-    {
-        base.OnInitialized();
-
-        for (int i = 0; i < 10; i++)
-        {
-            Session sess = new Session
-            {
-                Name = $"Krav Maga Level {i % 3 + 1}",
-                Description = "The description of the class.",
-                Location = $"Room {i % 3 + 1}"
-            };
-
-            Sessions.Add(sess);
-        }
-
-    }
-}
+<h3>Schedule</h3>
 
 <div class="container">
-    @foreach (var session in Sessions)
+    @foreach (var session in ClassSessions)
     {
         <div class="row">
             <div class="card">
-                <div class="card-body">
+                <div class="card-header">
                     Name: @session.Name
-                    Location: @session.Location
+                </div>
+                <div class="card-body">
+                    Description: @session.Description
                 </div>
             </div>
         </div>
     }
 </div>
+
+@code {
+    public List<ClassSession> ClassSessions { get; set; }
+
+    protected override void OnInitialized()
+    {
+        ClassSessions = dbContext.ClassSessions.ToList();
+    }
+}
