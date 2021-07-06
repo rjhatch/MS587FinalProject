@@ -24,6 +24,7 @@ else
                 <th>Id</th>
                 <th>Author</th>
                 <th>Text</th>
+                <th>Parent Id</th>
             </tr>
         </thead>
         <tbody>
@@ -36,8 +37,10 @@ else
                             <td>@comment.CommentId</td>
                             <td>@comment.Author.FirstName</td>
                             <td>@comment.Text</td>
+                            <td>@comment.ParentCommentId</td>
                             <td>
                                 <a class="btn btn-primary" href="comment/edit/@comment.CommentId">Edit</a>
+                                <a class="btn btn-info" href="comment/create/@comment.CommentId">Reply</a>
                                 <button class="btn btn-danger" @onclick="@(() => DeleteComment(comment.CommentId))">Delete</button>
                             </td>
                         </tr>
@@ -52,19 +55,25 @@ else
 
 
 @code {
-    public List<Comment> Comments { get; set; }
+    public List<Comment> Comments { get; set; } = new List<Comment>();
+
+    private List<Comment> allComments;
 
     protected override void OnInitialized()
     {
-        Comments = dbContext.Comments
+        allComments = dbContext.Comments
             .Include(a => a.Author)
             .ToList();
+
+        Comments = new Helpers.Comments.SortComments(allComments).Sort();
     }
 
     async Task DeleteComment(int id)
     {
         Comment comment = dbContext.Comments.Find(id);
-        dbContext.Remove(comment);
+
+        List<Comment> commentsToDelete = new Helpers.Comments.SortComments(allComments).FindCommentsWithParentIdIncludeParentComment(comment);
+        dbContext.RemoveRange(commentsToDelete);
 
         await dbContext.SaveChangesAsync();
 

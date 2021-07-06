@@ -1,17 +1,25 @@
 ﻿@page "/comment/create"
+@page "/comment/create/{ParentComment:int}"
+@page "/comment/create/{ParentComment:int}/{Redirect}"
 @inject ApplicationDbContext dbContext
 @inject NavigationManager navManager
 
 <h3>Create</h3>
 
 <Form ButtonText="Create Comment" Comment="@Comment"
-      OnValidSubmit="@CreateClass" />
+      OnValidSubmit="@CreateComment" />
 
 @code {
     Comment Comment = new Comment();
     private AuthenticationState authState;
 
     private string userId;
+
+    [Parameter]
+    public int ParentComment { get; set; } = 0;
+
+    [Parameter]
+    public string Redirect { get; set; }
 
     [CascadingParameter]
     private Task<AuthenticationState> AuthenticationStateTask { get; set; }
@@ -23,11 +31,13 @@
         userId = user.FindFirst(uid => uid.Type.Contains("nameidentifier")).Value;
     }
 
-    async Task CreateClass()
+    async Task CreateComment()
     {
         Comment.Author = dbContext.Users.FirstOrDefault(u => u.Id == userId);
+        Comment.ParentCommentId = ParentComment;
+
         await dbContext.AddAsync(Comment);
         await dbContext.SaveChangesAsync();
-        navManager.NavigateTo("comment");
+        navManager.NavigateTo(Redirect == "index" ? "/" :"comment");
     }
 }

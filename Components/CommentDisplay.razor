@@ -1,7 +1,24 @@
-﻿<h3>CommentDisplay</h3>
+﻿@inject ApplicationDbContext dbContext
 
-<div>
+<h3>Comment Display</h3>
 
+<div class="container">
+    @foreach (var comment in Comments)
+    {
+        <div class="row">
+            <div class="card w-100">
+                <div class="card-header">
+                    Name: @comment.Author.FirstName
+                </div>
+                <div class="card-body">
+                    Description: @comment.Text
+                </div>
+                <div class="card-footer">
+                    <a href="comment/create/@comment.CommentId/index">Reply</a>
+                </div>
+            </div>
+        </div>
+    }
 </div>
 
 
@@ -9,4 +26,14 @@
     public int ParentComment { get; set; }
 
     public List<Comment> Comments { get; set; }
+
+    protected override void OnInitialized()
+    {
+        List<Comment> AllComments = dbContext.Comments
+            .Include(a => a.Author)
+            .OrderBy(c => c.ParentCommentId)
+            .ToList();
+
+        Comments = new Helpers.Comments.SortComments(AllComments).Sort();
+    }
 }

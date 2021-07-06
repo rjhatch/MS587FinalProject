@@ -10,6 +10,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using MS587FinalProject.Areas.Identity;
+using MS587FinalProject.Components;
 using MS587FinalProject.Data;
 using MS587FinalProject.Data.Models;
 using Pomelo.EntityFrameworkCore;
